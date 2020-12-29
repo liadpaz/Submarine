@@ -25,7 +25,7 @@ class MessageOffer(Message):
         return MessageType.OPEN_OFFER
 
     def pack_message(self) -> bytes:
-        return pack('<cc', self.type, self.first_player)
+        return pack('<BB', self.type, self.first_player)
 
 
 class MessageAcceptOffer(Message):
@@ -38,7 +38,7 @@ class MessageAcceptOffer(Message):
         return MessageType.OPEN_ACCEPT
 
     def pack_message(self) -> bytes:
-        return pack('<c', self.type)
+        return pack('<B', self.type)
 
 
 class MessageRefuseOffer(Message):
@@ -51,7 +51,7 @@ class MessageRefuseOffer(Message):
         return MessageType.OPEN_REFUSE
 
     def pack_message(self) -> bytes:
-        return pack('<c', self.type)
+        return pack('<B', self.type)
 
 
 class MessageReady(Message):
@@ -64,7 +64,7 @@ class MessageReady(Message):
         return MessageType.OPEN_READY
 
     def pack_message(self) -> bytes:
-        return pack('<c', self.type)
+        return pack('<B', self.type)
 
 
 class MessageGuess(Message):
@@ -83,7 +83,7 @@ class MessageGuess(Message):
         return MessageType.GAME_GUESS
 
     def pack_message(self) -> bytes:
-        return pack('<ccc', self.type, self.x, self.y)
+        return pack('<BBB', self.type, self.x, self.y)
 
 
 class MessageGuessAnswer(Message):
@@ -99,7 +99,7 @@ class MessageGuessAnswer(Message):
         return MessageType.GAME_ANSWER
 
     def pack_message(self) -> bytes:
-        return pack('<cc', self.type, self.answer)
+        return pack('<BB', self.type, self.answer)
 
 
 class MessageDisconnect(Message):
@@ -112,7 +112,7 @@ class MessageDisconnect(Message):
         return MessageType.GENERAL_DC
 
     def pack_message(self) -> bytes:
-        return pack('<c', self.type)
+        return pack('<B', self.type)
 
 
 class MessageError(Message):
@@ -128,4 +128,4 @@ class MessageError(Message):
         return MessageType.GENERAL_ERROR
 
     def pack_message(self) -> bytes:
-        return pack('<cc', self.type, self.error)
+        return pack('<BB', self.type, self.error)
