@@ -20,3 +20,7 @@ class MessageType:
 
     GENERAL_DC = 50
     GENERAL_ERROR = 99
+
+
+class GameBoard:
+    SIZE = 10

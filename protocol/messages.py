@@ -6,7 +6,7 @@ Purpose:    This file contains definitions for all the messages types.
 from struct import pack
 
 from protocol.message import Message
-from protocol.constants import MessageType
+from protocol.constants import MessageType, GameBoard
 
 MIN_PLAYER_NUMBER = 0
 MAX_PLAYER_NUMBER = 255
@@ -31,3 +31,22 @@ class MessageOffer(Message):
 
     def pack_message(self) -> bytes:
         return pack('<cc', self.type, self.first_player)
+
+
+class MessageGuess(Message):
+    """
+    This class represents a guess message, in which one player guesses the other submarines position.
+    """
+
+    def __init__(self, x: int, y: int):
+        if x not in range(GameBoard.SIZE) or y not in range(GameBoard.SIZE):
+            raise ValueError(f'x and y coordinates need to be in board range!')
+        self.x = x
+        self.y = y
+
+    @property
+    def type(self) -> int:
+        return MessageType.GAME_GUESS
+
+    def pack_message(self) -> bytes:
+        return pack('<ccc', self.type, self.x, self.y)
