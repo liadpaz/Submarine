@@ -8,8 +8,8 @@ from abc import ABCMeta, abstractmethod
 
 class Message(metaclass=ABCMeta):
 
-    @abstractmethod
     @property
+    @abstractmethod
     def type(self) -> int:
         """
         :return: The message type.
