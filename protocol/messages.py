@@ -102,6 +102,19 @@ class MessageGuessAnswer(Message):
         return pack('<cc', self.type, self.answer)
 
 
+class MessageDisconnect(Message):
+    """
+    This class represents a disconnect message in which the player sending this message has disconnected from the game.
+    """
+
+    @property
+    def type(self) -> int:
+        return MessageType.GENERAL_DC
+
+    def pack_message(self) -> bytes:
+        return pack('<c', self.type)
+
+
 class MessageError(Message):
     """
     This class represents a general error message.
