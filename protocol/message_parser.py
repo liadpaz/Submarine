@@ -16,7 +16,7 @@ from protocol.messages import MessageOffer, MessageAcceptOffer, MessageRefuseOff
 
 def __parse_offer(data: bytes) -> Message:
     try:
-        _, first_player = unpack('<cc', data)
+        _, first_player = unpack('<BB', data)
         return MessageOffer(FirstPlayer(first_player))
     except struct.error:
         raise ParseException(ErrorType.INVALID_OFFER)
@@ -36,7 +36,7 @@ def __parse_ready(data: bytes) -> Message:
 
 def __parse_guess(data: bytes) -> Message:
     try:
-        _, x, y = unpack('<ccc', data)
+        _, x, y = unpack('<BBB', data)
         return MessageGuess(x, y)
     except struct.error:
         raise ParseException(ErrorType.INVALID_COORDINATES)
@@ -44,7 +44,7 @@ def __parse_guess(data: bytes) -> Message:
 
 def __parse_guess_answer(data: bytes) -> Message:
     try:
-        _, answer = unpack('<cc', data)
+        _, answer = unpack('<BB', data)
         return MessageGuessAnswer(GuessAnswer(answer))
     except struct.error:
         raise ParseException(ErrorType.INVALID_ANSWER)
@@ -55,7 +55,7 @@ def __parse_disconnect(data: bytes) -> Message:
 
 
 def __parse_error(data: bytes) -> Message:
-    _, error = unpack('<cc', data)
+    _, error = unpack('<BB', data)
     return MessageError(error)
 
 
@@ -72,5 +72,5 @@ __parsers__ = {
 
 
 def parse(data: bytes) -> Message:
-    message_type, _ = unpack('<cP', data)
+    message_type, _ = unpack('<BP', data)
     return __parsers__[message_type](data)
