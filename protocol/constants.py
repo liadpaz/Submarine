@@ -27,6 +27,11 @@ class GameBoard:
     SIZE = 10
 
 
+class FirstPlayer(Enum):
+    PLAYER_OFFERING = 0
+    PLAYER_RECEIVING = 1
+
+
 class GuessAnswer(Enum):
     """
     This enum represents all the possible answer a guess can return.
@@ -35,3 +40,10 @@ class GuessAnswer(Enum):
     HIT = 1
     SUNK = 2
     VICTORY = 3
+
+
+class ErrorType(Enum):
+    INVALID_TYPE = 0
+    INVALID_OFER = 1
+    INVALID_COORDINATES = 2
+    INVALID_ANSWER = 3
