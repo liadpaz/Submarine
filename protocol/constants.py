@@ -3,6 +3,7 @@ Name:       constants.py
 
 Purpose:    This file contains constants for the protocol client.
 """
+from enum import Enum
 
 CLIENT_PORT = 1234
 
@@ -24,3 +25,13 @@ class MessageType:
 
 class GameBoard:
     SIZE = 10
+
+
+class GuessAnswer(Enum):
+    """
+    This enum represents all the possible answer a guess can return.
+    """
+    MISS = 0
+    HIT = 1
+    SUNK = 2
+    VICTORY = 3
