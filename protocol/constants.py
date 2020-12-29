@@ -11,16 +11,16 @@ BUFFER_SIZE = 1024
 
 
 class MessageType:
-    OPEN_OFFER = 100
-    OPEN_ACCEPT = 101
-    OPEN_REFUSE = 102
-    OPEN_READY = 103
+    OPEN_OFFER = 100  # offer
+    OPEN_ACCEPT = 101  # accept offer
+    OPEN_REFUSE = 102  # refuse offer
+    OPEN_READY = 103  # all submarines has set & ready to play
 
-    GAME_GUESS = 110
-    GAME_ANSWER = 111
+    GAME_GUESS = 110  # a guess
+    GAME_ANSWER = 111  # answer to a guess
 
-    GENERAL_DC = 50
-    GENERAL_ERROR = 99
+    GENERAL_DC = 50  # disconnect
+    GENERAL_ERROR = 99  # error
 
 
 class GameBoard:
@@ -44,6 +44,6 @@ class GuessAnswer(Enum):
 
 class ErrorType(Enum):
     INVALID_TYPE = 0
-    INVALID_OFER = 1
+    INVALID_OFFER = 1
     INVALID_COORDINATES = 2
     INVALID_ANSWER = 3
