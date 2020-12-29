@@ -18,7 +18,7 @@ def __parse_offer(data: bytes) -> Message:
     try:
         _, first_player = unpack('<BB', data)
         return MessageOffer(FirstPlayer(first_player))
-    except struct.error:
+    except (struct.error, ValueError):
         raise ParseException(ErrorType.INVALID_OFFER)
 
 
@@ -38,7 +38,7 @@ def __parse_guess(data: bytes) -> Message:
     try:
         _, x, y = unpack('<BBB', data)
         return MessageGuess(x, y)
-    except struct.error:
+    except (struct.error, ValueError):
         raise ParseException(ErrorType.INVALID_COORDINATES)
 
 
@@ -46,7 +46,7 @@ def __parse_guess_answer(data: bytes) -> Message:
     try:
         _, answer = unpack('<BB', data)
         return MessageGuessAnswer(GuessAnswer(answer))
-    except struct.error:
+    except (struct.error, ValueError):
         raise ParseException(ErrorType.INVALID_ANSWER)
 
 
