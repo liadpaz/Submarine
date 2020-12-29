@@ -26,8 +26,8 @@ class Client:
         :param message: The message to send to the other player.
         :return: The returned message from the other player.
         """
-        self._send_message(message)
-        return self._get_message()
+        self.send_message(message)
+        return self.get_message()
 
     def disconnect(self):
         """
@@ -37,19 +37,13 @@ class Client:
                 possible that the other player had already been disconnected.
         """
         try:
-            self._send_message(MessageDisconnect())
+            self.send_message(MessageDisconnect())
         except IOError:
             pass
         finally:
             self.close()
 
-    def close(self):
-        """
-        This method closes the socket connection and must be called at the end of the client usage.
-        """
-        self.socket.close()
-
-    def _get_message(self) -> Message:
+    def get_message(self) -> Message:
         """
         This method gets a message from the other player and handles corrupted/invalid messages by sending an error
          message to the other player and waiting for a valid message.
@@ -63,14 +57,20 @@ class Client:
                 message = parse(self.socket.recv(BUFFER_SIZE))
                 valid_message_received = True
             except ParseException as e:
-                self._send_message(e.error_message())
+                self.send_message(e.error_message())
 
         return message
 
-    def _send_message(self, message: Message):
+    def send_message(self, message: Message):
         """
         This method sends a message to the other player.
 
         :param message: The message to send.
         """
         self.socket.sendall(message.pack_message())
+
+    def close(self):
+        """
+        This method closes the socket connection and must be called at the end of the client usage.
+        """
+        self.socket.close()
