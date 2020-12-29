@@ -6,7 +6,7 @@ Purpose:    This file contains definitions for all the messages types.
 from struct import pack
 
 from protocol.message import Message
-from protocol.constants import MessageType, GameBoard, GuessAnswer, FirstPlayer
+from protocol.constants import MessageType, GameBoard, GuessAnswer, FirstPlayer, ErrorType
 
 
 class MessageOffer(Message):
@@ -26,6 +26,45 @@ class MessageOffer(Message):
 
     def pack_message(self) -> bytes:
         return pack('<cc', self.type, self.first_player)
+
+
+class MessageAcceptOffer(Message):
+    """
+    This class represents the accept offer message.
+    """
+
+    @property
+    def type(self) -> int:
+        return MessageType.OPEN_ACCEPT
+
+    def pack_message(self) -> bytes:
+        return pack('<c', self.type)
+
+
+class MessageRefuseOffer(Message):
+    """
+    This class represents the refuse offer message.
+    """
+
+    @property
+    def type(self) -> int:
+        return MessageType.OPEN_REFUSE
+
+    def pack_message(self) -> bytes:
+        return pack('<c', self.type)
+
+
+class MessageReady(Message):
+    """
+    This class represents the ready message.
+    """
+
+    @property
+    def type(self) -> int:
+        return MessageType.OPEN_READY
+
+    def pack_message(self) -> bytes:
+        return pack('<c', self.type)
 
 
 class MessageGuess(Message):
@@ -61,3 +100,19 @@ class MessageGuessAnswer(Message):
 
     def pack_message(self) -> bytes:
         return pack('<cc', self.type, self.answer)
+
+
+class MessageError(Message):
+    """
+    This class represents a general error message.
+    """
+
+    def __init__(self, error: ErrorType):
+        self.error = error
+
+    @property
+    def type(self) -> int:
+        return MessageType.GENERAL_ERROR
+
+    def pack_message(self) -> bytes:
+        return pack('<cc', self.type, self.error)

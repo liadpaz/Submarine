@@ -14,7 +14,7 @@ class MessageType:
     OPEN_OFFER = 100
     OPEN_ACCEPT = 101
     OPEN_REFUSE = 102
-    OPEN_START = 103
+    OPEN_READY = 103
 
     GAME_GUESS = 110
     GAME_ANSWER = 111
