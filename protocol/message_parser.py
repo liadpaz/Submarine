@@ -6,7 +6,8 @@ Purpose:    This file contains the method to parse bytes data to a message.
 import struct
 from struct import unpack
 
-from protocol.constants import MessageType, GuessAnswer, FirstPlayer, ErrorType
+from common.constants import GuessAnswer, FirstPlayer, ErrorType
+from protocol.constants import MessageType
 from protocol.exceptions import ParseException
 from protocol.message import Message
 from protocol.messages import MessageOffer, MessageAcceptOffer, MessageRefuseOffer, MessageReady, MessageGuess, \

@@ -5,8 +5,9 @@ Purpose:    This file contains definitions for all the messages types.
 """
 from struct import pack
 
+from common.constants import GameBoard, GuessAnswer, FirstPlayer, ErrorType
 from protocol.message import Message
-from protocol.constants import MessageType, GameBoard, GuessAnswer, FirstPlayer, ErrorType
+from protocol.constants import MessageType
 
 
 class MessageOffer(Message):
