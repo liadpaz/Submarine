@@ -23,22 +23,25 @@ def main():
         [UNK, UNK, UNK, UNK, UNK, UNK, UNK, UNK, UNK, UNK],
         [UNK, UNK, UNK, UNK, UNK, UNK, UNK, UNK, UNK, UNK],
         [SUB, SUB, SUB, UNK, UNK, UNK, UNK, UNK, UNK, UNK],
-        [UNK, UNK, UNK, UNK, UNK, UNK, UNK, UNK, UNK, UNK]
     ]
     s = socket()
 
-    s.connect(('127.0.0.1', 1234))
+    s.connect(('192.168.77.9', 1239))
 
     client = Client(s)
     if client.send_offer(FirstPlayer.PLAYER_OFFERING).type == MessageType.OPEN_REFUSE:
         print('The other player had refused to play')
         return
-    client.wait_for_message()
-    client.send_ready()
 
-    game = Game(client, board, False, ConsoleIO())
+    try:
+        client.wait_for_message()
+        client.send_ready()
 
-    game.run()
+        game = Game(client, board, False, ConsoleIO())
+
+        game.run()
+    except:
+        client.disconnect()
 
 
 if __name__ == '__main__':

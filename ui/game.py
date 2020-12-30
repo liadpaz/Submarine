@@ -44,12 +44,9 @@ class Game:
                 x, y = self.__get_coordinates()
                 self.__guess(x, y)
             else:
-                guess = self.client.wait_for_message()
-                guess_answer = self.__board_state(guess.x, guess.y)
-                if guess_answer == GuessAnswer.MISS:
-                    self.this_turn = True
-                self.client.send_guess_answer(guess_answer)
+                self.__handle_guess()
             self.io.send_data(self.__format_boards())
+        self.disconnect()
 
     def __guess(self, x: int, y: int):
         """
@@ -71,8 +68,9 @@ class Game:
         This function handles the other players guess.
         """
         guess = self.client.wait_for_message()
-        cell_type = self.board[guess.x, guess.y]
+        cell_type = self.board[guess.x][guess.y]
         cell_type = self.__cell_type_answers__[cell_type]
+        self.board[guess.x][guess.y] = cell_type
         if cell_type == GuessAnswer.MISS:
             self.this_turn = True
         else:
