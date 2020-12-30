@@ -3,6 +3,7 @@ Name:       constants.py
 
 Purpose:    This file contains constants for the protocol client.
 """
+from enum import Enum
 
 BUFFER_SIZE = 1024
 
@@ -18,3 +19,10 @@ class MessageType:
 
     GENERAL_DC = 50  # disconnect
     GENERAL_ERROR = 99  # error
+
+
+class State(Enum):
+    DISCONNECTED = 0
+    CONNECTED = 1
+    IN_GAME = 2
+    GAME_OVER = 3
