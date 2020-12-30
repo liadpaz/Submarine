@@ -46,13 +46,15 @@ class Game:
             else:
                 guess = self.client.wait_for_message()
                 guess_answer = self.__board_state(guess.x, guess.y)
+                if guess_answer == GuessAnswer.MISS:
+                    self.this_turn = True
                 self.client.send_guess_answer(guess_answer)
+            self.io.send_data(self.__format_boards())
 
     def __guess(self, x: int, y: int):
         """
         This method is called when the user guesses a coordinate of the other players submarines.
         """
-        self.this_turn = True
         answer = self.client.send_guess(x, y).answer
         if answer == GuessAnswer.MISS:
             self.this_turn = False
@@ -74,6 +76,7 @@ class Game:
         if cell_type == GuessAnswer.MISS:
             self.this_turn = True
         else:
+            self.this_turn = False
             if self.__lost():
                 cell_type = GuessAnswer.VICTORY
                 self.game_over = True
@@ -114,6 +117,15 @@ class Game:
         self.game_over = True
         self.io.send_data('You won!')
         self.client.close()
+
+    def __format_boards(self) -> str:
+        player_board = '\n'.join([''.join(
+            ['-' if self.board[i][j] in (BoardState.UNKNOWN, BoardState.MISSED) else 'x' for j in
+             range(GameBoard.SIZE)]) for i in range(GameBoard.SIZE)])
+        enemy_board = '\n'.join([''.join(
+            ['-' if self.enemy_board[i][j] in (BoardState.UNKNOWN, BoardState.MISSED) else 'x' for j in
+             range(GameBoard.SIZE)]) for i in range(GameBoard.SIZE)])
+        return f'Your board:\n{player_board}\nEnemy board:\n{enemy_board}'
 
     def __sunk_ship(self, x: int, y: int):
         """

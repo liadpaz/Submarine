@@ -11,7 +11,7 @@ from protocol.exceptions import ParseException
 from protocol.message import Message
 from protocol.message_parser import parse
 from protocol.messages import MessageDisconnect, MessageGuess, MessageOffer, MessageAcceptOffer, MessageRefuseOffer, \
-    MessageReady, MessageGuessAnswer
+    MessageReady, MessageGuessAnswer, MessageError
 
 
 class Client:
@@ -31,7 +31,6 @@ class Client:
 
         :return: The the other player answer.
         """
-        self.__state = State
         answer = self.__message(MessageOffer(first_player))
         if answer.type == MessageType.OPEN_ACCEPT:
             self.__state = State.CONNECTED
@@ -110,7 +109,14 @@ class Client:
         This method sends a message and returns the answer message from the other player.
         """
         self.__send_message(message)
-        return self.__get_message()
+        received_valid_message = False
+        while not received_valid_message:
+            try:
+                returned_message = self.__get_message()
+                received_valid_message = True
+            except ValueError:
+                self.__send_message(message)
+        return returned_message
 
     def __get_message(self) -> Message:
         """
@@ -125,12 +131,16 @@ class Client:
             try:
                 packet = self.socket.recv(BUFFER_SIZE)
                 message = parse(packet)
+                if message.type == MessageType.GENERAL_ERROR:
+                    raise ValueError('Error message received')
                 if self.__check_state(message):
                     valid_message_received = True
                 else:
                     raise ParseException(ErrorType.INVALID_TYPE)
             except ParseException as e:
                 self.__send_message(e.error_message())
+            except IOError:
+                pass
 
         return message
 
@@ -150,7 +160,7 @@ class Client:
         """
         if message.type in (MessageType.OPEN_ACCEPT, MessageType.OPEN_REFUSE) and self.__state != State.DISCONNECTED:
             return False
-        if message.type == MessageType.OPEN_READY and self.__state != State.CONNECTED:
+        if message.type == MessageType.OPEN_READY and self.__state not in (State.CONNECTED, State.IN_GAME):
             return False
         if message.type in (MessageType.GAME_GUESS, MessageType.GAME_ANSWER) and self.__state != State.IN_GAME:
             return False
