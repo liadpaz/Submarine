@@ -123,7 +123,8 @@ class Client:
 
         while not valid_message_received:
             try:
-                message = parse(self.socket.recv(BUFFER_SIZE))
+                packet = self.socket.recv(BUFFER_SIZE)
+                message = parse(packet)
                 if self.__check_state(message):
                     valid_message_received = True
                 else:
@@ -139,7 +140,7 @@ class Client:
 
         :param message: The message to send.
         """
-        self.socket.sendall(message.pack_message())
+        self.socket.send(message.pack_message())
 
     def __check_state(self, message: Message) -> bool:
         """

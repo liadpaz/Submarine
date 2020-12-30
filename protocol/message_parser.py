@@ -72,5 +72,5 @@ __parsers__ = {
 
 
 def parse(data: bytes) -> Message:
-    message_type, _ = unpack('<BP', data)
+    message_type = data[0]
     return __parsers__[message_type](data)
