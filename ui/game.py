@@ -3,9 +3,10 @@ Name:       ui.py
 
 Purpose:    This file contains the Game class, which represents the ui.
 """
-from typing import List
+from typing import List, Tuple
 
 from common.constants import GameBoard, GuessAnswer
+from ui.base_io import BaseIO
 from ui.board import BoardState
 from protocol.client import Client
 
@@ -23,8 +24,9 @@ class Game:
         BoardState.SUBMARINE: GuessAnswer.HIT,
     }
 
-    def __init__(self, client: Client, board: List[List[BoardState]]):
+    def __init__(self, client: Client, board: List[List[BoardState]], io: BaseIO):
         self.client = client
+        self.io = io
         self.board = board
         self.enemy_board = [[BoardState.UNKNOWN for _ in range(GameBoard.SIZE)] for _ in range(GameBoard.SIZE)]
         self.this_turn = False
@@ -36,7 +38,12 @@ class Game:
         """
         while not self.game_over:
             if self.this_turn:
-                pass  # TODO: get input from user and send a guess message
+                x, y = self.__get_coordinates()
+                self.__guess(x, y)
+            else:
+                guess = self.client.wait_for_message()
+                guess_answer = self.__board_state(guess.x, guess.y)
+                self.client.send_guess_answer(guess_answer)
 
     def __guess(self, x: int, y: int):
         """
@@ -72,6 +79,20 @@ class Game:
     def disconnect(self):
         self.client.disconnect()
 
+    def __get_coordinates(self) -> Tuple[int, int]:
+        """
+        This method gets coordinates from the user.
+        """
+        valid_input = False
+        while not valid_input:
+            try:
+                x = int(self.io.get_prompted_data("Enter x coordinate: "))
+                y = int(self.io.get_prompted_data("Enter y coordinate: "))
+                valid_input = True
+            except TypeError:
+                pass
+        return x, y
+
     def __lost(self) -> bool:
         """
         :return: True if all the submarines had been sunken.
@@ -95,3 +116,12 @@ class Game:
         This method marks the submarine that contains the specified coordinate as sunken.
         """
         # TODO: mark the coordinates as sunken
+
+    def __board_state(self, x: int, y: int) -> GuessAnswer:
+        """
+        This method returns the state of the board at the specified cell.
+        """
+        cell_state = self.board[x][y]
+        if cell_state == BoardState.UNKNOWN:
+            return GuessAnswer.MISS
+        # TODO: finish this method
