@@ -24,12 +24,15 @@ class Game:
         BoardState.SUBMARINE: GuessAnswer.HIT,
     }
 
-    def __init__(self, client: Client, board: List[List[BoardState]], io: BaseIO):
+    def __init__(self, client: Client, board: List[List[BoardState]], this_starting: bool, io: BaseIO):
+        """
+        :param this_starting: Whether this player is starting the game or not.
+        """
         self.client = client
         self.io = io
         self.board = board
         self.enemy_board = [[BoardState.UNKNOWN for _ in range(GameBoard.SIZE)] for _ in range(GameBoard.SIZE)]
-        self.this_turn = False
+        self.this_turn = this_starting
         self.game_over = False
 
     def run(self):
@@ -101,6 +104,7 @@ class Game:
             for cell in row:
                 if cell == BoardState.SUBMARINE:
                     return False
+        self.io.send_data('You lost!')
         return True
 
     def __victory(self):
@@ -108,7 +112,7 @@ class Game:
         This method is used to indicate the user has won.
         """
         self.game_over = True
-        # TODO: inform the user that he had won
+        self.io.send_data('You won!')
         self.client.close()
 
     def __sunk_ship(self, x: int, y: int):
@@ -124,4 +128,5 @@ class Game:
         cell_state = self.board[x][y]
         if cell_state == BoardState.UNKNOWN:
             return GuessAnswer.MISS
-        # TODO: finish this method
+        # TODO: find
+        return GuessAnswer.HIT
