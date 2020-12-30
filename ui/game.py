@@ -5,11 +5,9 @@ Purpose:    This file contains the Game class, which represents the ui.
 """
 from typing import List
 
-from common.constants import GameBoard, GuessAnswer, ErrorType
-from protocol.message import Message
+from common.constants import GameBoard, GuessAnswer
 from ui.board import BoardState
 from protocol.client import Client
-from protocol.messages import MessageGuess, MessageError, MessageGuessAnswer
 
 
 class Game:
@@ -45,8 +43,7 @@ class Game:
         This method is called when the user guesses a coordinate of the other players submarines.
         """
         self.this_turn = True
-        message = MessageGuess(x, y)
-        answer = self.client.message(message).answer
+        answer = self.client.send_guess(x, y).answer
         if answer == GuessAnswer.MISS:
             self.this_turn = False
             self.enemy_board[x][y] = BoardState.MISSED
@@ -61,7 +58,7 @@ class Game:
         """
         This function handles the other players guess.
         """
-        guess = self.client.get_message()
+        guess = self.client.wait_for_message()
         cell_type = self.board[guess.x, guess.y]
         cell_type = self.__cell_type_answers__[cell_type]
         if cell_type == GuessAnswer.MISS:
@@ -70,13 +67,10 @@ class Game:
             if self.__lost():
                 cell_type = GuessAnswer.VICTORY
                 self.game_over = True
-        self.client.send_message(MessageGuessAnswer(cell_type))
+        self.client.send_guess_answer(cell_type)
 
     def disconnect(self):
         self.client.disconnect()
-
-    def __send_error_message(self):
-        self.client.send_message(MessageError(ErrorType.INVALID_TYPE))
 
     def __lost(self) -> bool:
         """
